@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="tg">
+<head>
+    <meta charset="UTF-8">
+    <title>Panda Quiz</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, sans-serif;
+            background: linear-gradient(135deg, #1a2980, #26d0ce);
+            color: white;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 20px;
+        }
+        
+        .container {
+            background: linear-gradient(to bottom right, #4a69bd, #6a89cc);
+            border-radius: 25px;
+            padding: 35px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
+            width: 95%;
+            max-width: 550px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .container::before {
+            content: "";
+            position: absolute;
+            top: -50px;
+            right: -50px;
+            width: 150px;
+            height: 150px;
+            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="40" fill="none" stroke="rgba(255,255,255,0.15)" stroke-width="8"/></svg>');
+            z-index: 0;
+        }
+        
+        h1 {
+            margin-bottom: 25px;
+            font-size: 36px;
+            text-shadow: 0 3px 6px rgba(0,0,0,0.3);
+            position: relative;
+            z-index: 1;
+            background: linear-gradient(to right, #ff9a9e, #fad0c4);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 800;
+        }
+        
+        #timer {
+            font-size: 32px;
+            font-weight: bold;
+            margin: 20px 0;
+            color: #FFD700;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+            background: rgba(0, 20, 40, 0.3);
+            padding: 10px;
+            border-radius: 50px;
+            display: inline-block;
+            min-width: 150px;
+        }
+        
+        #word-display {
+            font-size: 38px;
+            font-weight: bold;
+            margin: 30px 0;
+            min-height: 50px;
+            letter-spacing: 1px;
+            text-shadow: 0 3px 6px rgba(0,0,0,0.3);
+            color: #f8f9fa;
+        }
+        
+        #input-container {
+            margin: 25px 0;
+        }
+        
+        #answer {
+            width: 85%;
+            padding: 15px 20px;
+            font-size: 20px;
+            border: none;
+            border-radius: 30px;
+            text-align: center;
+            background: rgba(255, 255, 255, 0.95);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+            transition: all 0.3s;
+        }
+        
+        #answer:focus {
+            outline: none;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.25);
+            transform: scale(1.02);
+        }
+        
+        #progress {
+            margin: 20px 0;
+            font-size: 20px;
+            color: #e0f7fa;
+        }
+        
+        .btn {
+            background: linear-gradient(to right, #ff758c, #ff7eb3);
+            color: white;
+            border: none;
+            padding: 16px 40px;
+            font-size: 20px;
+            border-radius: 35px;
+            cursor: pointer;
+            margin: 15px 10px;
+            transition: all 0.3s;
+            font-weight: bold;
+            box-shadow: 0 5px 15px rgba(255, 117, 140, 0.4);
+            min-width: 220px;
+        }
+        
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 7px 18px rgba(255, 117, 140, 0.6);
+        }
+        
+        .btn:active {
+            transform: translateY(1px);
+        }
+        
+        #results {
+            font-size: 22px;
+            line-height: 1.6;
+            display: none;background: rgba(255, 255, 255, 0.1);
+            padding: 25px;
+            border-radius: 20px;
+            margin-top: 25px;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .error-item {
+            background: rgba(255, 235, 238, 0.15);
+            margin: 15px 0;
+            padding: 15px;
+            border-radius: 15px;
+            text-align: left;
+        }
+        
+        .error-tajik {
+            font-weight: bold;
+            font-size: 24px;
+            margin-bottom: 8px;
+            color: #ffccd5;
+        }
+        
+        .error-english {
+            color: #c8e6c9;
+            font-size: 20px;
+        }
+        
+        .error-user {
+            color: #ffcc80;
+            font-size: 20px;
+            margin-top: 5px;
+        }
+        
+        .results-buttons {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 25px;
+        }
+        
+        .panda-icon {
+            font-size: 40px;
+            margin-bottom: 15px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="panda-icon">🐼</div>
+        <h1>Panda Quiz</h1>
+        <div id="timer">09:00</div>
+        <div id="word-display"></div>
+        <div id="input-container">
+            <input type="text" id="answer" placeholder="Навишед ба англисӣ..." autocomplete="off">
+        </div>
+        <div id="progress">Калима: 0/50</div>
+        <button id="continue-btn" class="btn">Идома додан</button>
+        <div id="results"></div>
+    </div>
+
+    <script>
+        // Массив из 50 слов таджик-англий
+        const vocabulary = [
+            {tajik: "таъсирбахш", english: "effective"},
+            {tajik: "энергияи ҳассоснок", english: "emotional energy"},
+            {tajik: "ҳайратангез", english: "fabulous"},
+            {tajik: "хонаи оилавӣ", english: "family home"},
+            {tajik: "ҳавотозакунак", english: "fan"},
+            {tajik: "сарнавиштсоз", english: "fateful"},
+            {tajik: "тарсидан", english: "fear"},
+            {tajik: "дар ҳолати хуб будан", english: "feel up to"},
+            {tajik: "худро таъмин кардан", english: "fend for oneself"},
+            {tajik: "расмӣ", english: "formal"},
+            {tajik: "ду ҳафта", english: "fortnight"},
+            {tajik: "фолбин", english: "fortune teller"},
+            {tajik: "бозии нохақ", english: "foul play"},
+            {tajik: "касеро фиреб додан", english: "get the better of"},
+            {tajik: "капидан", english: "grab"},
+            {tajik: "ҳадя кардан", english: "grant"},
+            {tajik: "фишурдан", english: "grasp"},
+            {tajik: "дармондан", english: "hang on"},
+            {tajik: "бо дили шикаста", english: "heartbroken"},
+            {tajik: "ҳуҷум кардан", english: "hit on"},
+            {tajik: "хоназод", english: "home-grown"},
+            {tajik: "ба ватан баргаштан", english: "homecoming"},
+            {tajik: "бехонаву дар", english: "homeless"},
+            {tajik: "саҳифаи хонагӣ", english: "homepage"},
+            {tajik: "зодгоҳ", english: "hometown"},
+            {tajik: "савор шудан (ба мошин)", english: "hop in"},
+            {tajik: "сарҳад", english: "bound"},
+            {tajik: "гарам", english: "warming"},
+            {tajik: "растаниҳои хонагӣ", english: "house plant"},
+            {tajik: "ғайрирасмӣ", english: "informal"},
+            {tajik: "ба фикрам", english: "kind of"},
+            {tajik: "суғуртаи зиндагӣ", english: "life insurance"},
+            {tajik: "бузургии табиӣ", english: "life-size"},
+            {tajik: "абадӣ", english: "lifelong"},
+            {tajik: "якхела", english: "like"},
+            {tajik: "холӣ кардан (бор)", english: "load off"},
+            {tajik: "бахтатон омад", english: "lucky you"},
+            {tajik: "пул кор кардан дар зиндагӣ", english: "make a living"},
+            {tajik: "номдор", english: "mega"},
+            {tajik: "миля", english: "mile"},
+            {tajik: "кафк", english: "mousse"},
+            {tajik: "хоби кӯтоҳ", english: "nap"},{tajik: "шабака", english: "network"},
+            {tajik: "машҳур (бо маънои манфӣ)", english: "notorious"},
+            {tajik: "аввалан", english: "originally"},
+            {tajik: "хонаи ятимон", english: "orphanage"},
+            {tajik: "вафот кардан", english: "pass away"},
+            {tajik: "меҳрубон", english: "pretty"},
+            {tajik: "радиус", english: "radius"},
+            {tajik: "роҳи оҳан", english: "railway track"},
+            {tajik: "қатраи борон", english: "raindrop"},
+            {tajik: "шинохтан", english: "recognize"},
+            {tajik: "боқимонда", english: "rest of"},
+            {tajik: "ноҳамвор", english: "rough"},
+            {tajik: "хизмат кардан", english: "serve"}
+        ];
+
+        // Элементы DOM
+        const wordDisplay = document.getElementById('word-display');
+        const answerInput = document.getElementById('answer');
+        const timerDisplay = document.getElementById('timer');
+        const progressDisplay = document.getElementById('progress');
+        const continueBtn = document.getElementById('continue-btn');
+        const resultsDiv = document.getElementById('results');
+
+        // Переменные состояния
+        let currentWordIndex = 0;
+        let score = 0;
+        let timeLeft = 540; // 9 минут в секундах
+        let timer;
+        let mistakes = [];
+
+        // Инициализация
+        function init() {
+            showWord();
+            startTimer();
+            
+            continueBtn.addEventListener('click', nextWord);
+            answerInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') nextWord();
+            });
+        }
+
+        // Показать текущее слово
+        function showWord() {
+            wordDisplay.textContent = vocabulary[currentWordIndex].tajik;
+            answerInput.value = '';
+            answerInput.focus();
+            progressDisplay.textContent = `Калима: ${currentWordIndex+1}/50`;
+        }
+
+        // Следующее слово
+        function nextWord() {
+            const userAnswer = answerInput.value.trim().toLowerCase();
+            const correctAnswer = vocabulary[currentWordIndex].english.toLowerCase();
+            
+            if (userAnswer !== correctAnswer) {
+                mistakes.push({
+                    tajik: vocabulary[currentWordIndex].tajik,
+                    english: vocabulary[currentWordIndex].english,
+                    userAnswer: userAnswer
+                });
+            } else {
+                score++;
+            }
+            
+            currentWordIndex++;
+            
+            if (currentWordIndex < vocabulary.length && timeLeft > 0) {
+                showWord();
+            } else {
+                finishGame();
+            }
+        }
+
+        // Таймер
+        function startTimer() {
+            timer = setInterval(() => {
+                timeLeft--;
+                
+                const minutes = Math.floor(timeLeft / 60).toString().padStart(2, '0');
+                const seconds = (timeLeft % 60).toString().padStart(2, '0');
+                timerDisplay.textContent = `${minutes}:${seconds}`;
+                
+                if (timeLeft <= 0) {
+                    finishGame();
+                }
+            }, 1000);
+        }
+
+        // Завершение игры
+        function finishGame() {
+            clearInterval(timer);
+            
+            const percentage = Math.round((score / vocabulary.length) * 100);
+            let message;
+            
+            if (percentage >= 90) message = "Аъло! Шумо моҳири забони англисӣ ҳастед! 👏";
+            else if (percentage >= 70) message = "Хуб! Натиҷаи хуб! 👍";
+            else message = "Талош кунед, боз ҳам метавонед беҳтар! 💪";
+            
+            resultsDiv.innerHTML = `
+                <h2>Натиҷаҳо:</h2>
+                <p>Шумо ${score} аз ${vocabulary.length}-ро дуруст ҷавоб додед</p>
+                <p>${percentage}% дуруст</p>
+                <p><strong>${message}</strong></p>
+                <button id="restart-btn" class="btn">Аз нав сар кардан</button>
+                    <button id="show-errors-btn" class="btn">Хатоҳоро нигаред</button>
+                </div>
+                <div id="errors-container" style="display:none; margin-top:30px;"></div>
+            `;
+            
+            resultsDiv.style.display = 'block';
+            wordDisplay.style.display = 'none';
+            answerInput.style.display = 'none';
+            continueBtn.style.display = 'none';
+            progressDisplay.style.display = 'none';
+            
+            // Обработчики для новых кнопок
+            document.getElementById('restart-btn').addEventListener('click', restartGame);
+            document.getElementById('show-errors-btn').addEventListener('click', showErrors);
+        }
+
+        // Перезапуск игры
+        function restartGame() {
+            currentWordIndex = 0;
+            score = 0;
+            mistakes = [];
+            timeLeft = 540;
+            
+            resultsDiv.style.display = 'none';
+            wordDisplay.style.display = 'block';
+            answerInput.style.display = 'block';
+            continueBtn.style.display = 'inline-block';
+            progressDisplay.style.display = 'block';
+            
+            timerDisplay.textContent = '09:00';
+            showWord();
+            startTimer();
+        }
+
+        // Показать ошибки
+        function showErrors() {
+            const errorsContainer = document.getElementById('errors-container');
+            
+            if (errorsContainer.style.display === 'none') {
+                let errorsHTML = '<h3>Хатоҳо:</h3>';
+                
+                if (mistakes.length === 0) {
+                    errorsHTML += '<p>Шумо ягон хато надоштед! 👏</p>';
+                } else {
+                    mistakes.forEach((mistake, index) => {
+                        errorsHTML += `
+                            <div class="error-item">
+                                <div class="error-tajik">${index + 1}. ${mistake.tajik}</div>
+                                <div class="error-english">Ҷавоби дуруст: ${mistake.english}</div>
+                                <div class="error-user">Ҷавоби шумо: ${mistake.userAnswer || '---'}</div>
+                            </div>
+                        `;
+                    });
+                }
+                
+                errorsContainer.innerHTML = errorsHTML;
+                errorsContainer.style.display = 'block';
+                document.getElementById('show-errors-btn').textContent = "Пинҳон кардани хатоҳо";
+            } else {
+                errorsContainer.style.display = 'none';
+                document.getElementById('show-errors-btn').textContent = "Хатоҳоро нигаред";
+            }
+        }
+
+        // Запуск приложения при загрузке страницы
+        window.onload = init;
+    </script>
+</body>
+</html>
+                <div class="results-buttons">
