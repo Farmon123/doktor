@@ -2,241 +2,445 @@
 <html lang="tg">
 <head>
     <meta charset="UTF-8">
-    <title>Panda Quiz</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panda & Mina - Vocabulary Trainer</title>
     <style>
         * {
-            box-sizing: border-box;
             margin: 0;
             padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
         
         body {
-            font-family: 'Segoe UI', Tahoma, sans-serif;
-            background: linear-gradient(135deg, #1a2980, #26d0ce);
-            color: blue;
+            background: linear-gradient(135deg, #ffd1dc, #a2d2ff);
             min-height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
-            text-align: center;
             padding: 20px;
         }
         
         .container {
-            background: linear-gradient(to bottom right, #4a69bd, #6a89cc);
+            width: 100%;
+            max-width: 800px;
+            background: rgba(255, 255, 255, 0.9);
             border-radius: 25px;
-            padding: 35px;
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
-            width: 95%;
-            max-width: 650px;
-            position: relative;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
             overflow: hidden;
-            transition: all 0.5s ease;
-        }
-        
-        .container::before {
-            content: "";
-            position: absolute;
-            top: -50px;
-            right: -50px;
-            width: 150px;
-            height: 150px;
-            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="40" fill="none" stroke="rgba(255,255,255,0.15)" stroke-width="8"/></svg>');
-            z-index: 0;
-        }
-        
-        h1 {
-            margin-bottom: 25px;
-            font-size: 36px;
-            text-shadow: 0 3px 6px rgba(0,0,0,0.3);
             position: relative;
-            z-index: 1;
-            background: linear-gradient(to right, #ff9a9e, #fad0c4);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+        }
+        
+        /* Header Styles */
+        .header {
+            background: linear-gradient(to right, #ff85a2, #ffacc7);
+            padding: 25px 0;
+            text-align: center;
+            position: relative;
+            border-bottom: 3px solid #ff5c8d;
+        }
+        
+        .header h1 {
+            font-size: 3.2rem;
+            color: #2d3047;
             font-weight: 800;
+            text-shadow: 2px 2px 4px rgba(255, 255, 255, 0.5);
+            margin-bottom: 10px;
         }
         
-        #timer {
-            font-size: 32px;
-            font-weight: bold;
-            margin: 20px 0;
-            color: #FFD700;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
-            background: rgba(0, 20, 40, 0.3);
-            padding: 10px;
-            border-radius: 50px;
+        .header .subtitle {
+            font-size: 1.2rem;
+            color: #2d3047;
+            font-weight: 500;
+        }
+        
+        .panda-icon, .bunny-icon {
+            font-size: 3.5rem;
             display: inline-block;
-            min-width: 150px;
+            vertical-align: middle;
+            margin: 0 15px;
         }
         
-        #word-display {
-            font-size: 38px;
-            font-weight: bold;
+        /* Unit Selection */
+        .unit-selection {
+            padding: 30px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        
+        .unit-btn {
+            background: linear-gradient(to bottom, #4cc9f0, #4361ee);
+            color: white;
+            border: none;
+            border-radius: 20px;
+            padding: 25px 15px;
+            font-size: 1.6rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 15px rgba(67, 97, 238, 0.4);
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 180px;
+        }
+        
+        .unit-btn:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 20px rgba(67, 97, 238, 0.5);
+            background: linear-gradient(to bottom, #4895ef, #3f37c9);
+        }
+        
+        .unit-btn span {
+            font-size: 1rem;
+            margin-top: 10px;
+            font-weight: 400;
+            opacity: 0.9;
+        }
+        
+        /* Test Screen */
+        .test-screen {
+            padding: 30px;
+            display: none;
+        }
+        
+        .test-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+        
+        .progress-container {
+            background: #ffacc7;
+            border-radius: 50px;
+            padding: 10px 20px;
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #2d3047;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .timer-container {
+            width: 100px;
+            height: 100px;
+            background: linear-gradient(145deg, #ff85a2, #ff5c8d);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 8px 15px rgba(255, 92, 141, 0.4);
+            position: relative;
+        }
+        
+		
+        .timer {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: white;
+        }
+        
+        .word-display {
+            background: linear-gradient(to right, #f9f9f9, #ffffff);
+            border-radius: 20px;
+            padding: 40px 20px;
+            font-size: 2.5rem;
+            font-weight: 700;
+            text-align: center;
             margin: 30px 0;
-            min-height: 50px;
-            letter-spacing: 1px;
-            text-shadow: 0 3px 6px rgba(0,0,0,0.3);
-            color: #f8f9fa;
+            color: #2d3047;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+            border: 2px solid #ffacc7;
+            min-height: 180px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
         
-        #input-container {
-            margin: 25px 0;
+        .answer-container {
+            margin: 20px 0 30px;
         }
         
         #answer {
-            width: 85%;
-            padding: 15px 20px;
-            font-size: 20px;
+            width: 100%;
+            padding: 18px 25px;
+            font-size: 1.4rem;
             border: none;
-            border-radius: 30px;
+            border-radius: 50px;
             text-align: center;
-            background: rgba(255, 255, 255, 0.95);
-            box-shadow: 0 4px 10px rgba(0,0,0,0.15);
-            transition: all 0.3s;
+            background: #f0f5ff;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s ease;
         }
         
         #answer:focus {
             outline: none;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.25);
-            transform: scale(1.02);
+            box-shadow: 0 5px 20px rgba(67, 97, 238, 0.3);
+            background: white;
         }
         
-        #progress {
-            margin: 20px 0;
-            font-size: 20px;
-            color: #e0f7fa;
-        }
-        
-        .btn {
-            background: linear-gradient(to right, #ff758c, #ff7eb3);
+        .continue-btn {
+            background: linear-gradient(to right, #ff5c8d, #ff85a2);
             color: white;
             border: none;
-            padding: 16px 40px;
-            font-size: 20px;
-            border-radius: 35px;
+            padding: 18px 40px;
+            font-size: 1.4rem;
+            border-radius: 50px;
             cursor: pointer;
-            margin: 15px 10px;
-            transition: all 0.3s;
-            font-weight: bold;
-            box-shadow: 0 5px 15px rgba(255, 117, 140, 0.4);
-            min-width: 220px;
-            display: inline-block;
+            margin: 20px auto;
+            display: block;
+            font-weight: 700;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 15px rgba(255, 92, 141, 0.4);
         }
         
-        .btn:hover {
+        .continue-btn:hover {
             transform: translateY(-3px);
-            box-shadow: 0 7px 18px rgba(255, 117, 140, 0.6);
+            box-shadow: 0 10px 20px rgba(255, 92, 141, 0.5);
         }
         
-        .btn:active {
-            transform: translateY(1px);
+        /* Results Screen */
+        .results-screen {
+            padding: 30px;
+            display: none;
         }
         
-        #results {
-            font-size: 22px;
-            line-height: 1.6;
-            display: none;background: rgba(255, 255, 255, 0.1);
-            padding: 25px;
+        .results-title {
+            text-align: center;
+            font-size: 2.2rem;
+            color: #ff5c8d;
+            margin-bottom: 30px;
+            font-weight: 800;
+        }
+        
+        .stats-container {
+            background: linear-gradient(to right, #e0f7fa, #f8f9fa);
             border-radius: 20px;
-            margin-top: 25px;
-            position: relative;
-            z-index: 1;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+            border: 2px solid #ffacc7;
         }
         
-        .error-item {
-            background: rgba(255, 235, 238, 0.15);
+        .stat-item {
+            font-size: 1.5rem;
             margin: 15px 0;
+            color: #2d3047;
+            text-align: center;
+        }
+        
+        .stat-value {
+            font-weight: 700;
+            color: #ff5c8d;
+        }
+        
+        .message {
+            font-size: 1.8rem;
+            text-align: center;
+            margin: 25px 0;
+            color: #3f37c9;
+            font-weight: 700;
             padding: 15px;
+            background: rgba(255, 255, 255, 0.7);
             border-radius: 15px;
-            text-align: left;
-        }
-        
-        .error-tajik {
-            font-weight: bold;
-            font-size: 24px;
-            margin-bottom: 8px;
-            color: #ffccd5;
-        }
-        
-        .error-english {
-            color: #c8e6c9;
-            font-size: 20px;
-        }
-        
-        .error-user {
-            color: #ffcc80;
-            font-size: 20px;
-            margin-top: 5px;
         }
         
         .results-buttons {
             display: flex;
             justify-content: center;
+            gap: 20px;
+            margin-top: 30px;
             flex-wrap: wrap;
-            margin-top: 25px;
         }
         
-        .panda-icon {
-            font-size: 40px;
-            margin-bottom: 15px;
+        .result-btn {
+            background: linear-gradient(to right, #4cc9f0, #4361ee);
+            color: white;
+            border: none;
+            padding: 18px 35px;
+            font-size: 1.3rem;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: 700;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 15px rgba(67, 97, 238, 0.4);
+            min-width: 250px;
         }
         
-        /* Unit selection screen */
-        #unit-selection {
-            display: block;
-            animation: fadeIn 0.5s ease;
+        .result-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(67, 97, 238, 0.5);
         }
         
-        .unit-btn {
-            width: 100%;
-            max-width: 500px;
-            margin: 15px auto;
-            display: block;
-        }
-        
-        #test-screen {
+        .errors-container {
             display: none;
+            margin-top: 30px;
+            background: white;
+            border-radius: 20px;
+            padding: 25px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);border: 2px solid #ffacc7;
+            max-height: 400px;
+            overflow-y: auto;
         }
         
-        .unit-title {
-            font-size: 28px;
-            margin-bottom: 25px;
-            color: #FFD700;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+        .error-title {
+            text-align: center;
+            font-size: 1.8rem;
+            color: #ff5c8d;
+            margin-bottom: 20px;
+            font-weight: 700;
         }
         
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
+        .error-item {
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 15px;
+            background: #f8f9fa;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+        }
+        
+        .error-tajik {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #2d3047;
+        }
+        
+        .correct-answer {
+            font-size: 1.3rem;
+            color: #4361ee;
+            margin-top: 8px;
+        }
+        
+        .user-answer {
+            font-size: 1.3rem;
+            color: #ff5c8d;
+            margin-top: 5px;
+            font-style: italic;
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .unit-selection {
+                grid-template-columns: 1fr;
+            }
+            
+            .unit-btn {
+                height: 150px;
+                font-size: 1.4rem;
+            }
+            
+            .header h1 {
+                font-size: 2.5rem;
+            }
+            
+            .panda-icon, .bunny-icon {
+                font-size: 2.8rem;
+            }
+            
+            .test-header {
+                flex-direction: column;
+                align-items: center;
+                gap: 20px;
+            }
+            
+            .results-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .result-btn {
+                width: 100%;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .word-display {
+                font-size: 2rem;
+                padding: 30px 15px;
+            }
+            
+            .timer-container {
+                width: 85px;
+                height: 85px;
+            }
+            
+            .timer {
+                font-size: 1.5rem;
+            }
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <div class="panda-icon">🐼</div>
-        <h1>Panda Quiz</h1>
-        
-        <!-- Unit selection screen -->
-        <div id="unit-selection">
-            <div class="unit-title">Як юнитро интихоб кунед:</div>
-            <button id="unit4-btn" class="btn unit-btn">Unite 4</button>
-            <button id="unit5-btn" class="btn unit-btn">Unite 5</button>
-            <button id="unit4-end-btn" class="btn unit-btn">Unite 4 охир</button>
-            <button id="unit5-end-btn" class="btn unit-btn">Unite 5 охир</button>
+        <!-- Header -->
+        <div class="header">
+            <div class="panda-icon">🐼</div>
+            <h1>Panda & Mina</h1>
+            <div class="bunny-icon">🐰</div>
+            <div class="subtitle">Тарҷумаи калимаҳо аз тоҷикӣ ба англисӣ</div>
         </div>
         
-        <!-- Test screen -->
-        <div id="test-screen">
-            <div id="current-unit" class="unit-title"></div>
-            <div id="timer">09:00</div>
-            <div id="word-display"></div>
-            <div id="input-container">
-                <input type="text" id="answer" placeholder="Навиcед ба англисӣ..." autocomplete="off">
+        <!-- Unit Selection Screen -->
+        <div class="unit-selection" id="unit-selection">
+            <button class="unit-btn" id="unit4-btn">
+                Unite 4
+                <span>50 калимаи асосӣ</span>
+            </button>
+            <button class="unit-btn" id="unit5-btn">
+                Unite 5
+                <span>50 калимаи асосӣ</span>
+            </button>
+            <button class="unit-btn" id="unit4-end-btn">
+                Unite 4 охир
+                <span>50 калимаи иловагӣ</span>
+            </button>
+            <button class="unit-btn" id="unit5-end-btn">
+                Unite 5 охир
+                <span>50 калимаи иловагӣ</span>
+            </button>
+        </div>
+        
+        <!-- Test Screen -->
+        <div class="test-screen" id="test-screen">
+            <div class="test-header">
+                <div class="progress-container" id="progress">Калима: 1/50</div>
+                <div class="timer-container">
+                    <div class="timer" id="timer">09:00</div>
+                </div>
             </div>
-            <div id="progress">Калима: 0/50</div>
-            <button id="continue-btn" class="btn">Идома додан</button>
-            <div id="results"></div>
+            
+            <div class="word-display" id="word-display">кӯдак</div>
+            
+            <div class="answer-container">
+                <input type="text" id="answer" placeholder="Навишед ба англисӣ..." autocomplete="off">
+            </div>
+            
+            <button class="continue-btn" id="continue-btn">Идома додан</button>
+        </div>
+        
+        <!-- Results Screen -->
+        <div class="results-screen" id="results-screen"><h2 class="results-title">Натиҷаҳои тест</h2>
+            
+            <div class="stats-container">
+                <div class="stat-item">Шумо <span class="stat-value" id="score">45</span> аз <span class="stat-value">50</span>-ро дуруст ҷавоб додед</div>
+                <div class="stat-item">Фоизи дурустӣ: <span class="stat-value" id="percentage">90%</span></div>
+                <div class="stat-item">Миқдори хатоҳо: <span class="stat-value" id="mistakes-count">5</span></div>
+            </div>
+            
+            <div class="message" id="message">Аъло! Шумо моҳири забони англисӣ ҳастед! 👏</div>
+            
+            <div class="results-buttons">
+                <button class="result-btn" id="restart-btn">Аз нав сар кардан</button>
+                <button class="result-btn" id="show-errors-btn">Хатоҳоро нигаред</button>
+            </div>
+            
+            <div class="errors-container" id="errors-container">
+                <h3 class="error-title">Рӯйхати хатоҳо</h3>
+                <!-- Errors will be displayed here dynamically -->
+            </div>
         </div>
     </div>
 
@@ -260,7 +464,17 @@
                 {tajik: "савор шудан", english: "board"},
                 {tajik: "рафиқ", english: "buddy"},
                 {tajik: "пасту баланд (дар роҳ)", english: "bumpy"},
-                {tajik: "эҳтиёткор", english: "careful"},{tajik: "хрусткунанда", english: "crisp"},
+                {tajik: "эҳтиёткор", english: "careful"},
+                {tajik: "хрусткунанда", english: "crisp"},
+                {tajik: "мурда", english: "dead"},
+                {tajik: "хоҳиш", english: "desire"},
+                {tajik: "ноумедӣ", english: "disappointment"},
+                {tajik: "нафрат, бадбинӣ", english: "dislike"},
+                {tajik: "тормоздиҳӣ, кашолакунии дилгир", english: "drag"},
+                {tajik: "даромадан, ҳамроҳ шудан", english: "drop in"},
+                {tajik: "студияи сабти садо ва видео", english: "recording studio"},
+                {tajik: "хотиррасон кардан", english: "remind"},
+                {tajik: "шӯҳрат, обрӯ", english: "reputation"},
                 {tajik: "чаппагардон кардан", english: "reverse"},
                 {tajik: "вазн, усули мусиқӣ", english: "rhythm"},
                 {tajik: "рост, ҳақонӣ (дар сиёсат)", english: "right-wing"},
@@ -277,8 +491,7 @@
                 {tajik: "мубориза", english: "struggle"},
                 {tajik: "зане, ки барои ҳуқуқи интихоботӣ мубориза мебарад", english: "suffragette"},
                 {tajik: "тарафдори ҳуқуқи интихобот барои занон", english: "suffragist"},
-                {tajik: "тактика", english: "tactic"},
-                {tajik: "телескоп", english: "telescope"},
+                {tajik: "тактика", english: "tactic"},{tajik: "телескоп", english: "telescope"},
                 {tajik: "назария", english: "theory"},
                 {tajik: "бехабар", english: "unaware"},
                 {tajik: "аз зер кофтан, заиф кардан", english: "undermine"},
@@ -315,7 +528,8 @@
                 {tajik: "сайёҳи пиёдагард", english: "backpacker"},
                 {tajik: "манъ кардан", english: "ban"},
                 {tajik: "моли бозоргир", english: "best-selling"},
-                {tajik: "вайрон шудан бо таъсири бактерия", english: "biodegrade"},{tajik: "саратон", english: "cancer"},
+                {tajik: "вайрон шудан бо таъсири бактерия", english: "biodegrade"},
+                {tajik: "саратон", english: "cancer"},
                 {tajik: "арзон", english: "cheap"},
                 {tajik: "буғӣ кардан, нафасгир шудан", english: "choke"},
                 {tajik: "боз доштан, ҳаракатро мушкил кардан", english: "clog"},
@@ -338,73 +552,70 @@
             ],
             
             "Unite 4 охир": [
-                {tajik: "таъсирбахш", english: "effective"},
-                {tajik: "энергияи ҳассоснок", english: "emotional energy"},
-                {tajik: "ҳайратангез", english: "fabulous"},
+                {tajik: "энергияи ҳиссӣ, энергияи эмоционалӣ", english: "emotional energy"},
+                {tajik: "ҳайратангез, таъсирбахш", english: "fabulous"},
                 {tajik: "хонаи оилавӣ", english: "family home"},
-                {tajik: "ҳавотозакунак", english: "fan"},
-                {tajik: "сарнавиштсоз", english: "fateful"},
-                {tajik: "тарсидан", english: "fear"},
-                {tajik: "дар ҳолати хуб будан", english: "feel up to"},
-                {tajik: "худро таъмин кардан", english: "fend for oneself"},
-                {tajik: "расмӣ", english: "formal"},
+                {tajik: "вентилятор, ҳавотозакунанда", english: "fan"},
+                {tajik: "сарнавиштсоз, тақдирсоз", english: "fateful"},
+                {tajik: "тарсидан, ҳарос доштан", english: "fear"},{tajik: "дар ҳолати хуб будан, қобилияти иҷро карданро доштан", english: "feel up to"},
+                {tajik: "худро таъмин кардан, мустақилона зиндагӣ кардан", english: "fend for oneself"},
+                {tajik: "расмӣ, муқаррарӣ", english: "formal"},
                 {tajik: "ду ҳафта", english: "fortnight"},
-                {tajik: "фолбин", english: "fortune teller"},
-                {tajik: "бозии нохақ", english: "foul play"},
-                {tajik: "касеро фиреб додан", english: "get the better of"},
-                {tajik: "капидан", english: "grab"},
-                {tajik: "ҳадя кардан", english: "grant"},
-                {tajik: "фишурдан", english: "grasp"},
-                {tajik: "дармондан", english: "hang on"},
-                {tajik: "бо дили шикаста", english: "heartbroken"},
-                {tajik: "ҳуҷум кардан", english: "hit on"},
-                {tajik: "хоназод", english: "home-grown"},
+                {tajik: "фолбин, касе ки тақдирро пешгӯӣ мекунад", english: "fortune teller"},
+                {tajik: "бозии ношоиста, бозии ношаффоф", english: "foul play"},
+                {tajik: "касеро фиреб додан, ғолиб шудан бар касе", english: "get the better of"},
+                {tajik: "капидан, доштан", english: "grab"},
+                {tajik: "ҳадя кардан, додан", english: "grant"},
+                {tajik: "фишурдан, мустаҳкам доштан", english: "grasp"},
+                {tajik: "печида гирифтан, чаппа шудан", english: "hang on"},
+                {tajik: "бо дили шикаста, сахт ғамзада", english: "heartbroken"},
+                {tajik: "ҳуҷум кардан, зад задан", english: "hit on"},
+                {tajik: "хоназод, дар хона парваришшуда", english: "home-grown"},
                 {tajik: "ба ватан баргаштан", english: "homecoming"},
-                {tajik: "бехонаву дар", english: "homeless"},
-                {tajik: "саҳифаи хонагӣ", english: "homepage"},
-                {tajik: "зодгоҳ", english: "hometown"},
+                {tajik: "бе хонаву дар, бехона", english: "homeless"},
+                {tajik: "саҳифаи хонагӣ (дар интернет)", english: "homepage"},
+                {tajik: "зодгоҳ, шаҳри модарӣ", english: "hometown"},
                 {tajik: "савор шудан (ба мошин)", english: "hop in"},
-                {tajik: "сарҳад", english: "bound"},
-                {tajik: "гарам", english: "warming"},
-                {tajik: "растаниҳои хонагӣ", english: "house plant"},
-                {tajik: "ғайрирасмӣ", english: "informal"},
-                {tajik: "ба фикрам", english: "kind of"},
+                {tajik: "сарҳад, маҳдудият", english: "bound"},
+                {tajik: "гарам, самимӣ", english: "warming"},
+                {tajik: "растании хонагӣ", english: "house plant"},
+                {tajik: "ғайрирасмӣ, ғайриформалӣ", english: "informal"},
+                {tajik: "як навъ, як хел", english: "kind of"},
                 {tajik: "суғуртаи зиндагӣ", english: "life insurance"},
-                {tajik: "бузургии табиӣ", english: "life-size"},
-                {tajik: "абадӣ", english: "lifelong"},
-                {tajik: "якхела", english: "like"},
-                {tajik: "холӣ кардан (бор)", english: "load off"},
-                {tajik: "бахтатон омад", english: "lucky you"},
-                {tajik: "пул кор кардан дар зиндагӣ", english: "make a living"},
-                {tajik: "номдор", english: "mega"},
-                {tajik: "миля", english: "mile"},
-                {tajik: "кафк", english: "mousse"},
-                {tajik: "хоби кӯтоҳ", english: "nap"},
-                {tajik: "шабака", english: "network"},
-                {tajik: "машҳур (бо маънои манфӣ)", english: "notorious"},{tajik: "аввалан", english: "originally"},
+                {tajik: "бо андозаи воқеӣ, табиӣ", english: "life-size"},
+                {tajik: "умрбод, абадӣ", english: "lifelong"},
+                {tajik: "монандӣ, мисли", english: "like"},
+                {tajik: "холӣ кардан (бор), сабукӣ додан", english: "load off"},
+                {tajik: "бахтатон омад, бахти хуб", english: "lucky you"},
+                {tajik: "пул кор кардан барои зиндагӣ", english: "make a living"},
+                {tajik: "калон, аълосифат", english: "mega"},
+                {tajik: "миля (андозаи масофа)", english: "mile"},
+                {tajik: "мусс (намуди ширини)", english: "mousse"},
+                {tajik: "хоби кӯтоҳ, хоб (замони рӯз)", english: "nap"},
+                {tajik: "шабака, тор", english: "network"},
+                {tajik: "номаълум, машҳур бо сабаби бад", english: "notorious"},
+                {tajik: "аввилан, аслан", english: "originally"},
                 {tajik: "хонаи ятимон", english: "orphanage"},
-                {tajik: "вафот кардан", english: "pass away"},
-                {tajik: "меҳрубон", english: "pretty"},
+                {tajik: "вафот кардан, мурдан", english: "pass away"},
+                {tajik: "зебо, дилрабо, хуб", english: "pretty"},
                 {tajik: "радиус", english: "radius"},
                 {tajik: "роҳи оҳан", english: "railway track"},
                 {tajik: "қатраи борон", english: "raindrop"}
             ],
             
             "Unite 5 охир": [
-                {tajik: "галтондан, свалить", english: "damp"},
                 {tajik: "канор, край", english: "edge"},
                 {tajik: "император", english: "emperor"},
                 {tajik: "санъати муҳандисӣ", english: "engineering"},
                 {tajik: "ҳолати фавқулодаи экологӣ", english: "environmental emergency"},
                 {tajik: "тадқиқотчӣ", english: "explorer"},
                 {tajik: "ҳавопаймои ҷангӣ", english: "fighter plane"},
-                {tajik: "пуркунанда, даҳана", english: "filler"},
+                {tajik: "пуркунанда, даҳана (барои рехтани моеъ)", english: "filler"},
                 {tajik: "доғ, доғи кунҷитак", english: "fleck"},
                 {tajik: "қисм, каср", english: "fraction"},
                 {tajik: "пора, порча", english: "fragment"},
                 {tajik: "ба кор шурӯъ кардан", english: "get down to"},
-                {tajik: "кор, тиҷорат", english: "business"},
-                {tajik: "фурӯ бурдан", english: "gobble up"},
+                {tajik: "кор, тиҷорат", english: "business"},{tajik: "фурӯ бурдан", english: "gobble up"},
                 {tajik: "системаи глобалии муайян кардани мавқеъ", english: "GPS (Global Positioning System)"},
                 {tajik: "сардард", english: "headache"},
                 {tajik: "маркази чизе", english: "heart of sth"},
@@ -448,13 +659,19 @@
         // DOM elements
         const unitSelection = document.getElementById('unit-selection');
         const testScreen = document.getElementById('test-screen');
-        const currentUnitDisplay = document.getElementById('current-unit');
+        const resultsScreen = document.getElementById('results-screen');
         const wordDisplay = document.getElementById('word-display');
         const answerInput = document.getElementById('answer');
         const timerDisplay = document.getElementById('timer');
         const progressDisplay = document.getElementById('progress');
         const continueBtn = document.getElementById('continue-btn');
-        const resultsDiv = document.getElementById('results');
+        const restartBtn = document.getElementById('restart-btn');
+        const showErrorsBtn = document.getElementById('show-errors-btn');
+        const errorsContainer = document.getElementById('errors-container');
+        const scoreDisplay = document.getElementById('score');
+        const percentageDisplay = document.getElementById('percentage');
+        const mistakesCountDisplay = document.getElementById('mistakes-count');
+        const messageDisplay = document.getElementById('message');
         
         // Unit buttons
         const unit4Btn = document.getElementById('unit4-btn');
@@ -466,8 +683,7 @@
         let currentVocabulary = [];
         let currentWordIndex = 0;
         let score = 0;
-        let timeLeft = 540; // 9 minutes in seconds
-        let timer;
+        let timeLeft = 540; // 9 minutes in secondslet timer;
         let mistakes = [];
         let selectedUnit = "";
 
@@ -480,7 +696,9 @@
         // Start selected unit
         function startUnit(unitName) {
             selectedUnit = unitName;
-            currentVocabulary = units[unitName];
+            currentVocabulary = [...units[unitName]]; // Copy the array
+            shuffleArray(currentVocabulary); // Shuffle the words
+            
             currentWordIndex = 0;
             score = 0;
             timeLeft = 540;
@@ -488,17 +706,15 @@
             
             unitSelection.style.display = 'none';
             testScreen.style.display = 'block';
-            currentUnitDisplay.textContent = unitName;
+            resultsScreen.style.display = 'none';
             
             showWord();
             startTimer();
             
-            // Clear previous results
-            resultsDiv.style.display = 'none';
-            wordDisplay.style.display = 'block';
-            answerInput.style.display = 'block';
-            continueBtn.style.display = 'inline-block';
-            progressDisplay.style.display = 'block';
+            // Focus on answer input
+            setTimeout(() => {
+                answerInput.focus();
+            }, 100);
         }
 
         // Show current word
@@ -506,7 +722,6 @@
             if (currentWordIndex < currentVocabulary.length) {
                 wordDisplay.textContent = currentVocabulary[currentWordIndex].tajik;
                 answerInput.value = '';
-                answerInput.focus();
                 progressDisplay.textContent = `Калима: ${currentWordIndex+1}/${currentVocabulary.length}`;
             }
         }
@@ -530,6 +745,7 @@
             
             if (currentWordIndex < currentVocabulary.length && timeLeft > 0) {
                 showWord();
+                answerInput.focus();
             } else {
                 finishGame();
             }
@@ -538,74 +754,61 @@
         // Timer
         function startTimer() {
             clearInterval(timer);
+            updateTimerDisplay();
+            
             timer = setInterval(() => {
                 timeLeft--;
-                
-                const minutes = Math.floor(timeLeft / 60).toString().padStart(2, '0');
-                const seconds = (timeLeft % 60).toString().padStart(2, '0');
-                timerDisplay.textContent = `${minutes}:${seconds}`;
+                updateTimerDisplay();
                 
                 if (timeLeft <= 0) {
                     finishGame();
                 }
             }, 1000);
         }
+        
+        function updateTimerDisplay() {
+            const minutes = Math.floor(timeLeft / 60).toString().padStart(2, '0');
+            const seconds = (timeLeft % 60).toString().padStart(2, '0');
+            timerDisplay.textContent = `${minutes}:${seconds}`;
+        }
 
         // Finish game
         function finishGame() {
             clearInterval(timer);
             
-            const percentage = Math.round((score / currentVocabulary.length) * 100);let message;
+            const percentage = Math.round((score / currentVocabulary.length) * 100);
             
-            if (percentage >= 90) message = "Аъло! Шумо моҳири забони англисӣ ҳастед! 👏";
-            else if (percentage >= 70) message = "Хуб! Натиҷаи хуб! 👍";
-            else message = "Талош кунед, боз ҳам метавонед беҳтар! 💪";
+            scoreDisplay.textContent = score;
+            percentageDisplay.textContent = `${percentage}%`;
+            mistakesCountDisplay.textContent = mistakes.length;
             
-            resultsDiv.innerHTML = `
-                <h2>Натиҷаҳо:</h2>
-                <p>Шумо ${score} аз ${currentVocabulary.length}-ро дуруст ҷавоб додед</p>
-                <p>${percentage}% дуруст</p>
-                <p><strong>${message}</strong></p>
-                
-                <div class="results-buttons">
-                    <button id="restart-btn" class="btn">Аз нав сар кардан</button>
-                    <button id="show-errors-btn" class="btn">Хатоҳоро нигаред</button>
-                </div>
-                <div id="errors-container" style="display:none; margin-top:30px;"></div>
-            `;
+            if (percentage >= 90) {
+                messageDisplay.textContent = "Аъло! Шумо моҳири забони англисӣ ҳастед! 👏";
+            } else if (percentage >= 70) {
+                messageDisplay.textContent = "Хуб! Натиҷаи хуб! 👍";
+            } else {
+                messageDisplay.textContent = "Талош кунед, боз ҳам метавонед беҳтар! 💪";
+            }
             
-            resultsDiv.style.display = 'block';
-            wordDisplay.style.display = 'none';
-            answerInput.style.display = 'none';
-            continueBtn.style.display = 'none';
-            progressDisplay.style.display = 'none';
-            
-            // Event listeners for new buttons
-            document.getElementById('restart-btn').addEventListener('click', () => {
-                unitSelection.style.display = 'block';
-                testScreen.style.display = 'none';
-            });
-            
-            document.getElementById('show-errors-btn').addEventListener('click', showErrors);
+            testScreen.style.display = 'none';
+            resultsScreen.style.display = 'block';
+            errorsContainer.style.display = 'none';
         }
 
         // Show errors
         function showErrors() {
-            const errorsContainer = document.getElementById('errors-container');
-            const showErrorsBtn = document.getElementById('show-errors-btn');
-            
             if (errorsContainer.style.display === 'none') {
-                let errorsHTML = '<h3>Хатоҳо:</h3>';
+let errorsHTML = '';
                 
                 if (mistakes.length === 0) {
-                    errorsHTML += '<p>Шумо ягон хато надоштед! 👏</p>';
+                    errorsHTML = '<p>Шумо ягон хато надоштед! 👏</p>';
                 } else {
                     mistakes.forEach((mistake, index) => {
                         errorsHTML += `
                             <div class="error-item">
                                 <div class="error-tajik">${index + 1}. ${mistake.tajik}</div>
-                                <div class="error-english">Ҷавоби дуруст: ${mistake.english}</div>
-                                <div class="error-user">Ҷавоби шумо: ${mistake.userAnswer || '---'}</div>
+                                <div class="correct-answer">Ҷавоби дуруст: ${mistake.english}</div>
+                                <div class="user-answer">Ҷавоби шумо: ${mistake.userAnswer || '---'}</div>
                             </div>
                         `;
                     });
@@ -625,6 +828,22 @@
         answerInput.addEventListener('keypress', function(e) {
             if (e.key === 'Enter') nextWord();
         });
+        
+        restartBtn.addEventListener('click', function() {
+            resultsScreen.style.display = 'none';
+            unitSelection.style.display = 'grid';
+        });
+        
+        showErrorsBtn.addEventListener('click', showErrors);
+        
+        // Utility function to shuffle array
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+        }
     </script>
 </body>
 </html>
+
